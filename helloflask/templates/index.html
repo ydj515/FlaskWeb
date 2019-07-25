@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jinja Test Page</title>
+</head>
+<body>
+    <h1>Jinja Test: {{title}} - {{mu}}</h1>
+
+    <!-- 하이픈을 처주면 개행이 사라짐-->
+    <pre>
+        ttt 한글
+        {% if True %}
+            TTT
+        {%- endif -%} qqq
+    </pre>
+
+    {{ 'abc {ef} ghi' }}
+    <hr>
+    <!-- tag 안먹게 하기-->
+    {{ "}}>> <strong>Strong</strong>" | escape }}
+    <hr>
+    <!-- tag 먹게 하기-->
+    {{ "<strong>Strong</strong>" | safe }}
+    <hr>
+    <!-- tag 벗기기-->
+    {{ "<strong>Strong</strong>" | striptags }}
+
+    <hr>
+
+    <!-- pre와 비슷. 코드를 보여주어라-->
+    {% raw %}
+        {% if True %}
+        TTT
+        {% endif %}
+    {% endraw %}
+
+    <hr>
+
+    <ul>
+        {% for item in lst %}
+            <li>{{item[0]}}: {{item[1]}}</li>
+        {% endfor %}
+
+        {%for title, name in lst%}
+            <li>{{title}}: {{name}}</li>
+        {% endfor %}
+
+        {%for title, name in lst%}
+            <li class="{{loop.cycle('aaa', 'bbb')}}">{{title}}: {{name}} - {{loop.index0}}</li>
+        {% endfor %}
+
+        {%if <Condition> %}
+        {% endif %}
+    </ul>
+
+    <ul>
+        {% for nav in navs recursive %}
+        <li>
+            <!--loop.depth : for 루프의 깊이를 나타냄-->
+            <small>{{title}}</small> : {{name}} - {{loop.depth}}
+            {%- if ref -%}
+            <ul class="{% if loop.depth == 3%} sub {% endif %}">
+                {{ loop(ref) }}
+            </ul>
+            {%- endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+    <ul>
+        {% for nav in navs recursive %}
+        <li>
+            <a href="{{nav.url | e}}">{{nav.title}} - {{loop.depth}</a>}
+            {%- if ref -%}
+            <ul class="{% if loop.depth == 1%} font-sm {% endif %}">
+                {{ loop(nav.children) }}
+            </ul>
+            {%- endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

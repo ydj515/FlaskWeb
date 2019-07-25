@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+<!--scoped 꼭 붙혀줘야 나옴!!!-->
+{% for item in [1,2,3] %}
+    {% block title2 scoped %} <p>xxxxxxxxxx {{itme}} </p> {% endblock%}
+{% endfor %}
+<!-- layout.html의  section 부분에 삽입됨-->
+{% block section %}
+    <div>
+        {{ super() }}
+        fdsfsdfsdfsdfsdf
+    </div>
+{% endblock %}

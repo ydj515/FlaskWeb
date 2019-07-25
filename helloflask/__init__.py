@@ -1,22 +1,66 @@
 #-*- coding: utf-8 -*-
 
 from flask import Flask, g, make_response, request, Response
-from datetime import datetime, date
-from flask import session
+from datetime import datetime, date, timedelta
+from flask import session, render_template, Markup
 
 app = Flask(__name__)
 app.debug = True # debug mode on
+app.jinja_env.trim_blocks = True # trim_blocks app config
 # app.config['SERVER_NAME'] = 'local.com:5000'
 
 app.config.update(MAX_CONTEXT_LENGTH=1024*1024) # client가 올릴 수 있는 용량 제한
 
-app.secret_key = 'x12343yRH!mMwf' # app에 설정했으므로 모든 session이 공유
-
+# app.secret_key = 'x12343yRH!mMwf' # app에 설정했으므로 모든 session이 공유
+# 위 app.secret_key와 동일한 역할
 app.config.update(
     SECRET_KEY='x12343yRH!mMwf',
     SESSION_COOKIE_NAME='hororok',
-    PERMANENT_SESSION_LIFETIME=11
+    PERMANENT_SESSION_LIFETIME=timedelta(31) # 31days
 )
+
+
+@app.route('/main')
+def main():
+    return render_template('main.html', title="main")
+
+
+class Nav: # 계층 구조를 나타내기 편함
+    def __init__(self, title, url='#', children=[]):
+        self.title = title
+        self.url = url
+        self.children = children
+
+@app.route('/tmpl2')
+def tmpl2():
+    python = Nav("파이썬", "https://naver.com") # 원래는 클래스로 안할 시에 python = "파이썬", "https://naver.com", []라고 형식을 맞춰주어야했음
+    java = Nav("자바", "https://naver.com")
+    top_prg = ("프로그래밍 언어", "https://naver.com", [python, java])
+
+    jinja = Nav("Jinja", "https://naver.com")
+    gc = Nav("Genshi, Cheetah", "https://naver.com")
+    fl = Nav("플라스크", "https://naver.com", [jinja, gc])
+
+    spring = Nav("스프링","https://naver.com")
+    ndjs = Nav("노드JS", "https://naver.com")
+    top_webframework = Nav("웹 프레임워크", "https://naver.com", [fl, spring, ndjs])
+
+
+    return render_template("index.html", navs=[top_prg,top_webframework])
+
+
+
+@app.route('/tmpl')
+def tmpl():
+    tit = Markup("<strong>Title</strong>")
+    mu = Markup("<h1>iii - <i>%s</i></h1>")
+    h = mu % "Italic"
+    print(type(tit))
+    print(h)
+
+    lst = [("만남1", "김건모"), ("만남2", "노사연")]
+
+    return render_template('index.html', title=tit, mu=h, lst=lst) # templates 밑에 있으면 이렇게 씀. title이라는 변수값에 tit 넣음
 
 @app.before_first_request
 def before_first_request():
